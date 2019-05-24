@@ -1,17 +1,13 @@
 {
   "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./build",
     "target": "esnext",
     "declaration": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "node"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test"
-  ]
+  "include": ["src/**/*"]
 }
