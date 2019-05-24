@@ -6,7 +6,7 @@ import {
   render,
   waitForElement,
 } from 'react-testing-library'
-import create from '../src/index'
+import create, { PartialState } from '../src/index'
 
 afterEach(cleanup)
 
@@ -80,10 +80,11 @@ it('can subscribe to part of the store', async () => {
 })
 
 it('can get the store', () => {
-  const [, { getState }] = create((set, get) => ({
+  type State = { value: number; getState1: () => State; getState2: () => State }
+  const [, { getState }] = create<State>((set, get) => ({
     value: 1,
     getState1: get,
-    getState2: () => getState(),
+    getState2: (): State => getState(),
   }))
 
   expect(getState().getState1().value).toBe(1)
@@ -91,10 +92,15 @@ it('can get the store', () => {
 })
 
 it('can set the store', () => {
-  const [, { getState, setState }] = create(set => ({
+  type State = {
+    value: number
+    setState1: (state: PartialState<State>) => void
+    setState2: (state: PartialState<State>) => void
+  }
+  const [, { getState, setState }] = create<State>(set => ({
     value: 1,
     setState1: set,
-    setState2: newState => setState(newState),
+    setState2: (newState: PartialState<State>) => setState(newState),
   }))
 
   getState().setState1({ ...getState(), value: 2 })

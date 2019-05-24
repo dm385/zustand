@@ -3,15 +3,31 @@ import shallowEqual from './shallowEqual'
 
 type StateListener<T> = (state: T) => void
 type StateSelector<T, U> = (state: T) => U
-type PartialState<T> = Partial<T> | ((state: T) => Partial<T>)
+export type PartialState<T> = Partial<T> | ((state: T) => Partial<T>)
+
+export type UseStore<T> = {
+  (): T
+  <U>(selector?: StateSelector<T, U>, deps?: ReadonlyArray<any>): U
+}
+
+export interface StoreApi<T> {
+  getState: () => T
+  setState: (partialState: PartialState<T>) => void
+  subscribe: (listener: StateListener<T>) => () => void
+  destroy: () => void
+}
 
 const reducer = <T>(state: any, newState: T) => newState
 
 export default function create<
-  State extends Record<string, any>,
-  SetState extends (partialState: PartialState<Record<string, any>>) => void,
-  GetState extends () => Record<string, any>
->(createState: (set: SetState, get: GetState) => State) {
+  State extends Record<string, any> = Record<string, any>,
+  SetState extends (partialState: PartialState<State>) => void = (
+    partialState: PartialState<State>
+  ) => void,
+  GetState extends () => State = () => State
+>(
+  createState: (set: SetState, get: GetState) => State
+): [UseStore<State>, StoreApi<State>] {
   const listeners: Set<StateListener<State>> = new Set()
 
   const setState = (partialState: PartialState<State>) => {
