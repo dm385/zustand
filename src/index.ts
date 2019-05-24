@@ -100,5 +100,5 @@ export default function create<
   let state = createState(setState as SetState, getState as GetState)
   const api = { destroy, getState, setState, subscribe }
 
-  return [useStore, api] as [typeof useStore, typeof api]
+  return [useStore, api]
 }
